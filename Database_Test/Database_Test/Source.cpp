@@ -55,15 +55,77 @@ void GetAllUsers(sql::Connection* con) {
 	
 }
 
+void UpdatePassword(sql::Connection* con, std::string user, std::string newPassword)
+{
+	try
+	{
+		//sql::Statement* stmt = con->createStatement();
+		std::string query = "UPDATE users SET password = ? WHERE userName = ?";
+		sql::PreparedStatement* stmt = con->prepareStatement(query);
+
+		stmt->setString(1, newPassword);
+		stmt->setString(2, user);
+
+		//int affected_rows = stmt->executeUpdate(query);
+		int affected_rows = stmt->executeUpdate();
+
+		std::cout << "Number of rows affected: " << affected_rows << std::endl;
+
+		delete stmt;
+	}
+	catch (sql::SQLException& e)
+	{
+		std::cerr << "Error updating password: " << e.what() << std::endl;
+	}
+}
+
+void DeleteByUser(sql::Connection* con, std::string user) {
+	try {
+		sql::Statement* stmt = con->createStatement();
+		std::string query = "DELETE FROM users WHERE userName='" + user + "'";
+
+		int affected_rows = stmt->executeUpdate(query);
+		std::cout << "Number of users deleted" << affected_rows << std::endl;
+		delete stmt;
+	}
+	catch (sql::SQLException& e)
+	{
+		std::cerr << "Error Error while deleting user: " << e.what() << std::endl;
+	}
+}
+
+void CreateUsers(sql::Connection* con, std::string user, std::string password) {
+	try {
+		sql::Statement* stmt = con->createStatement();
+		std::string query = "INSERT INTO users (userName, password) VALUES('" + user + "', '" + password + "')";
+
+		int affected_rows = stmt->executeUpdate(query);
+
+		if (affected_rows > 0) {
+			std::cout << "User created successfully" << std::endl;
+		}
+
+		delete stmt;
+	}
+	catch (sql::SQLException& e)
+	{
+		std::cerr << "Error while creating user " << e.what() << std::endl;
+	}
+}
 
 void main()
 {
 	sql::Driver* driver;
 	sql::Connection* con;
+	ConnectDatabase(driver, con);
 	con->setSchema(DATABASE);
 
-	ConnectDatabase(driver, con);
-	GetAllUsers(con);
+	//GetAllUsers(con);
+	UpdatePassword(con, "Radev", "suspenderAlumnos");
+
+	//DeleteByUser(con, "Edu");
+
+	//CreateUsers(con, "Edu", "123");
 	DisconnectDatabase(con);
 
 	system("pause");
