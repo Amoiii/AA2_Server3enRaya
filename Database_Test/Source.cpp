@@ -10,8 +10,8 @@
 
 #define SERVER "127.0.0.1:3306"
 #define USERNAME "root"
-#define PASSWORD ""
-#define DATABASE "Videogame1"
+#define PASSWORD "enti"
+#define DATABASE "videogame"
 void ConnectDatabase(sql::Driver*& driver, sql::Connection*& con) {
 	try {
 		driver = get_driver_instance();
